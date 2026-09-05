@@ -103,7 +103,7 @@ npm run fetch:catalog
 
 Les charges sont **toujours exprimées en kilogrammes**. À l'import, un fichier contenant
 directement `templates` / `sessions` est également accepté ; les entrées sont fusionnées
-par identifiant, et les réglages inconnus (issus d'une version antérieure) sont ignorés.
+par identifiant.
 
 ## Limites connues
 

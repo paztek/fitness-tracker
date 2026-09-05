@@ -12,10 +12,7 @@ import { uid } from '@/lib/id';
 import { seedTemplates } from '@/data/seed';
 
 export const STORAGE_KEY = 'fitness-tracker';
-/** Version du format des fichiers d'export / import. */
 export const FORMAT_VERSION = 1;
-/** Version du schéma stocké dans localStorage (indépendante de l'export). */
-const STORAGE_VERSION = 2;
 
 export const DEFAULT_SETTINGS: Settings = {
   defaultRestSec: 90,
@@ -27,21 +24,6 @@ export const DEFAULT_SETTINGS: Settings = {
   weightIncrement: 2.5,
   theme: 'dark',
 };
-
-/**
- * Ne conserve que les réglages connus. Une sauvegarde — ou un localStorage —
- * plus ancien peut porter des clés retirées depuis (l'unité de charge, par
- * exemple, désormais toujours le kilogramme).
- */
-export function sanitizeSettings(raw: unknown): Settings {
-  if (typeof raw !== 'object' || raw === null) return DEFAULT_SETTINGS;
-  const source = raw as Record<string, unknown>;
-  const result: Record<string, unknown> = { ...DEFAULT_SETTINGS };
-  for (const key of Object.keys(DEFAULT_SETTINGS)) {
-    if (source[key] !== undefined) result[key] = source[key];
-  }
-  return result as unknown as Settings;
-}
 
 interface Data {
   settings: Settings;
@@ -200,7 +182,7 @@ export const useStore = create<Store>()(
         set((s) => {
           if (mode === 'replace') {
             return {
-              settings: sanitizeSettings(incoming.settings),
+              settings: { ...DEFAULT_SETTINGS, ...incoming.settings },
               templates: incoming.templates ?? [],
               sessions: incoming.sessions ?? [],
               customExercises: incoming.customExercises ?? [],
@@ -210,7 +192,7 @@ export const useStore = create<Store>()(
             };
           }
           return {
-            settings: sanitizeSettings({ ...s.settings, ...incoming.settings }),
+            settings: { ...s.settings, ...incoming.settings },
             templates: mergeById(s.templates, incoming.templates ?? []),
             sessions: mergeById(s.sessions, incoming.sessions ?? []).sort(
               (a, b) => b.startedAt.localeCompare(a.startedAt),
@@ -234,12 +216,8 @@ export const useStore = create<Store>()(
     }),
     {
       name: STORAGE_KEY,
-      version: STORAGE_VERSION,
+      version: FORMAT_VERSION,
       storage: createJSONStorage(() => localStorage),
-      migrate: (persisted) => {
-        const state = (persisted ?? {}) as Partial<Data>;
-        return { ...state, settings: sanitizeSettings(state.settings) };
-      },
       partialize: (state): Data => ({
         settings: state.settings,
         templates: state.templates,
