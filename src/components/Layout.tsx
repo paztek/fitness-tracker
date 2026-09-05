@@ -26,7 +26,7 @@ export function TabBar() {
             className={({ isActive }) => `tab ${isActive ? 'active' : ''}`}
           >
             <Icon name={tab.icon} />
-            {tab.label}
+            <span className="tab-label">{tab.label}</span>
           </NavLink>
         ))}
       </div>
