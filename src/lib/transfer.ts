@@ -1,5 +1,5 @@
-import type { BackupFile, CustomExercise, Session, Settings, Template } from '@/types';
-import { DEFAULT_SETTINGS, exportData, FORMAT_VERSION } from '@/store/store';
+import type { BackupFile, CustomExercise, Session, Template } from '@/types';
+import { exportData, FORMAT_VERSION, sanitizeSettings } from '@/store/store';
 
 export function backupFilename(): string {
   const now = new Date();
@@ -102,10 +102,7 @@ export function parseBackup(text: string): BackupFile {
   );
   if (badSession) throw new Error('Une séance du fichier est incomplète (id, date ou phases).');
 
-  const settings =
-    typeof data.settings === 'object' && data.settings !== null
-      ? { ...DEFAULT_SETTINGS, ...(data.settings as Partial<Settings>) }
-      : DEFAULT_SETTINGS;
+  const settings = sanitizeSettings(data.settings);
 
   return {
     app: 'fitness-tracker',

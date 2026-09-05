@@ -4,14 +4,20 @@ import { Screen } from '@/components/Layout';
 import { BarChart, BarList } from '@/components/Charts';
 import { EmptyState, SearchInput } from '@/components/ui';
 import { Icon } from '@/components/icons';
-import { useExerciseIndex, useSessions, useSettings } from '@/store/selectors';
+import { useExerciseIndex, useSessions } from '@/store/selectors';
 import {
   activitySummary,
   buildExerciseStats,
   buildWeeklySummary,
   muscleGroupBreakdown,
 } from '@/lib/stats';
-import { formatDuration, formatNumber, formatRelativeDay, kgToDisplay, round } from '@/lib/format';
+import {
+  formatDuration,
+  formatNumber,
+  formatRelativeDay,
+  formatWeight,
+  round,
+} from '@/lib/format';
 import { MUSCLE_GROUPS } from '@/data/labels';
 import { normalize } from '@/lib/search';
 import { sessionDurationSec } from '@/lib/sessionOps';
@@ -19,7 +25,6 @@ import { sessionDurationSec } from '@/lib/sessionOps';
 export function ProgressPage() {
   const navigate = useNavigate();
   const sessions = useSessions();
-  const settings = useSettings();
   const { byId } = useExerciseIndex();
   const [query, setQuery] = useState('');
 
@@ -97,10 +102,8 @@ export function ProgressPage() {
           <span className="label muted">séances / 30 j</span>
         </div>
         <div className="stat">
-          <span className="value">
-            {formatNumber(kgToDisplay(last30.volume, settings.units))}
-          </span>
-          <span className="label muted">{settings.units} / 30 j</span>
+          <span className="value">{formatNumber(last30.volume)}</span>
+          <span className="label muted">kg / 30 j</span>
         </div>
         <div className="stat">
           <span className="value">{formatDuration(last30.avgDuration)}</span>
@@ -119,10 +122,10 @@ export function ProgressPage() {
         <BarChart
           points={weeks.map((week) => ({
             label: week.label,
-            value: round(kgToDisplay(week.volume, settings.units)),
+            value: round(week.volume),
             hint: `Semaine du ${week.label} · ${week.sessions} séance${week.sessions > 1 ? 's' : ''}`,
           }))}
-          format={(value) => `${formatNumber(value)} ${settings.units}`}
+          format={(value) => `${formatNumber(value)} kg`}
         />
       </div>
 
@@ -157,9 +160,9 @@ export function ProgressPage() {
             <span className="mono small" style={{ textAlign: 'right' }}>
               {row.prWeight > 0 ? (
                 <>
-                  {round(kgToDisplay(row.prWeight, settings.units), 1)} {settings.units}
+                  {formatWeight(row.prWeight)}
                   <span className="tiny muted" style={{ display: 'block' }}>
-                    1RM ~{round(kgToDisplay(row.pr1RM, settings.units), 1)}
+                    1RM ~{round(row.pr1RM, 1)}
                   </span>
                 </>
               ) : (

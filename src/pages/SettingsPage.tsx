@@ -12,7 +12,7 @@ import {
   shareBackup,
 } from '@/lib/transfer';
 import { formatNumber, plural } from '@/lib/format';
-import type { BackupFile, ImageSource, ThemeSetting, Units } from '@/types';
+import type { BackupFile, ImageSource, ThemeSetting } from '@/types';
 
 function storageSizeKb(): number {
   try {
@@ -83,18 +83,6 @@ export function SettingsPage() {
         <h2>Séance</h2>
 
         <div className="field">
-          <span className="label">Unité de charge</span>
-          <Segmented<Units>
-            value={settings.units}
-            options={[
-              { value: 'kg', label: 'Kilogrammes' },
-              { value: 'lb', label: 'Livres' },
-            ]}
-            onChange={(units) => setSettings({ units })}
-          />
-        </div>
-
-        <div className="field">
           <span className="label">Repos par défaut (secondes)</span>
           <NumberField
             value={settings.defaultRestSec}
@@ -105,7 +93,7 @@ export function SettingsPage() {
         </div>
 
         <div className="field">
-          <span className="label">Pas d'incrément de charge ({settings.units})</span>
+          <span className="label">Pas d'incrément de charge (kg)</span>
           <NumberField
             value={settings.weightIncrement}
             onChange={(weightIncrement) =>

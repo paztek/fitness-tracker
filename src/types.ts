@@ -135,12 +135,10 @@ export interface Session {
   phases: SessionPhase[];
 }
 
-export type Units = 'kg' | 'lb';
 export type ImageSource = 'jsdelivr' | 'github' | 'none';
 export type ThemeSetting = 'dark' | 'light' | 'auto';
 
 export interface Settings {
-  units: Units;
   /** Repos par défaut entre deux séries, en secondes. */
   defaultRestSec: number;
   restAutoStart: boolean;

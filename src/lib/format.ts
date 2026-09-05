@@ -1,14 +1,5 @@
-import type { Units } from '@/types';
-
-const KG_PER_LB = 0.45359237;
-
-export function kgToDisplay(kg: number, units: Units): number {
-  return units === 'lb' ? kg / KG_PER_LB : kg;
-}
-
-export function displayToKg(value: number, units: Units): number {
-  return units === 'lb' ? value * KG_PER_LB : value;
-}
+/** Toutes les charges de l'application sont exprimées en kilogrammes. */
+export const WEIGHT_UNIT = 'kg';
 
 /** Arrondi « propre » : 2 décimales max, sans zéros inutiles. */
 export function round(value: number, decimals = 2): number {
@@ -16,9 +7,10 @@ export function round(value: number, decimals = 2): number {
   return Math.round(value * f) / f;
 }
 
-export function formatWeight(kg: number | undefined, units: Units): string {
+/** « 62,5 kg ». Toutes les charges passent par ici. */
+export function formatWeight(kg: number | undefined): string {
   if (kg === undefined || Number.isNaN(kg)) return '—';
-  return `${round(kgToDisplay(kg, units), 1)} ${units}`;
+  return `${formatNumber(round(kg, 1), 1)} ${WEIGHT_UNIT}`;
 }
 
 export function formatNumber(value: number, decimals = 0): string {

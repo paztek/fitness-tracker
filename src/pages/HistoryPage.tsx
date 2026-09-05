@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/components/Layout';
 import { Icon } from '@/components/icons';
 import { EmptyState, SearchInput } from '@/components/ui';
-import { useSessions, useSettings } from '@/store/selectors';
+import { useSessions } from '@/store/selectors';
 import { sessionDurationSec, sessionVolumeKg, doneSetsCount } from '@/lib/sessionOps';
 import {
   capitalize,
   formatDuration,
   formatNumber,
   formatRelativeDay,
-  kgToDisplay,
   plural,
 } from '@/lib/format';
 import { normalize } from '@/lib/search';
@@ -21,7 +20,6 @@ const monthFmt = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeri
 export function HistoryPage() {
   const navigate = useNavigate();
   const sessions = useSessions();
-  const settings = useSettings();
   const [query, setQuery] = useState('');
 
   const groups = useMemo(() => {
@@ -78,7 +76,7 @@ export function HistoryPage() {
                       {formatRelativeDay(session.startedAt)} ·{' '}
                       {formatDuration(sessionDurationSec(session))} · {doneSetsCount(session)} séries
                       {sessionVolumeKg(session) > 0 &&
-                        ` · ${formatNumber(kgToDisplay(sessionVolumeKg(session), settings.units))} ${settings.units}`}
+                        ` · ${formatNumber(sessionVolumeKg(session))} kg`}
                     </div>
                   </div>
                   <Icon name="chevron" size={16} />

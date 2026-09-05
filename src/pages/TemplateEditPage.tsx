@@ -17,7 +17,7 @@ import {
   newPlannedExercise,
   newSet,
 } from '@/lib/templateOps';
-import { displayToKg, formatDuration, kgToDisplay, round } from '@/lib/format';
+import { formatDuration, formatWeight } from '@/lib/format';
 import { PHASE_FR, SET_KIND_FR, SPORT_FR } from '@/data/labels';
 import type {
   Phase,
@@ -27,7 +27,6 @@ import type {
   Sport,
   Template,
   TrackingMode,
-  Units,
 } from '@/types';
 import { sessionFromTemplate } from '@/lib/sessionOps';
 
@@ -209,7 +208,7 @@ export function TemplateEditPage() {
                   <span className="strong small nowrap" style={{ display: 'block' }}>
                     {item.name}
                   </span>
-                  <span className="tiny muted">{summarizeSets(item, settings.units)}</span>
+                  <span className="tiny muted">{summarizeSets(item)}</span>
                 </span>
                 <span className="row" style={{ gap: 2 }}>
                   <button
@@ -332,15 +331,13 @@ export function TemplateEditPage() {
   );
 }
 
-function summarizeSets(item: PlannedExercise, units: Units): string {
+function summarizeSets(item: PlannedExercise): string {
   if (item.sets.length === 0) return 'Aucune série';
   const parts = item.sets.map((set) => {
     if (item.tracking === 'time') return `${set.durationSec ?? 0} s`;
     if (item.tracking === 'distance') return `${set.distanceM ?? 0} m`;
     const reps = set.reps ?? '?';
-    return set.weight
-      ? `${reps}×${round(kgToDisplay(set.weight, units), 1)} ${units}`
-      : `${reps}`;
+    return set.weight ? `${reps} × ${formatWeight(set.weight)}` : `${reps}`;
   });
   const unique = [...new Set(parts)];
   return unique.length === 1
@@ -357,7 +354,7 @@ interface SetsEditorProps {
 
 /** Édition des séries d'un exercice planifié. */
 function SetsEditor({ item, onClose, onChange, onRemove }: SetsEditorProps) {
-  const { units, defaultRestSec, weightIncrement } = useSettings();
+  const { defaultRestSec, weightIncrement } = useSettings();
 
   const updateSet = (setId: string, patch: Partial<PlannedExercise['sets'][number]>) =>
     onChange((current) => ({
@@ -451,17 +448,13 @@ function SetsEditor({ item, onClose, onChange, onRemove }: SetsEditorProps) {
                 {item.tracking === 'weight' && (
                   <div className="cell">
                     <NumberField
-                      value={set.weight === undefined ? undefined : round(kgToDisplay(set.weight, units), 1)}
-                      onChange={(value) =>
-                        updateSet(set.id, {
-                          weight: value === undefined ? undefined : displayToKg(value, units),
-                        })
-                      }
+                      value={set.weight}
+                      onChange={(weight) => updateSet(set.id, { weight })}
                       step={weightIncrement}
-                      ariaLabel="Charge"
+                      ariaLabel="Charge en kilogrammes"
                       withButtons={false}
                     />
-                    <span className="cell-hint">{units}</span>
+                    <span className="cell-hint">kg</span>
                   </div>
                 )}
               </>

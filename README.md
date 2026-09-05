@@ -43,8 +43,9 @@ données restent dans le navigateur et s'exportent en JSON.
 - Tout est stocké dans le `localStorage` du navigateur.
 - Export JSON (téléchargement, partage système ou copie), réimport en **fusion** ou en
   **remplacement**, remise à zéro complète.
-- Réglages : kg/lb, repos par défaut, incrément de charge, son/vibration, thème
+- Réglages : repos par défaut, incrément de charge, son/vibration, thème
   sombre / clair / système, source des images (ou aucune image, pour un usage hors ligne).
+- Les charges sont exprimées en **kilogrammes** partout, sans conversion.
 
 ## Démarrer
 
@@ -92,7 +93,7 @@ npm run fetch:catalog
   "formatVersion": 1,
   "exportedAt": "2026-09-05T09:12:00.000Z",
   "data": {
-    "settings": { "units": "kg", "defaultRestSec": 90, "…": "…" },
+    "settings": { "defaultRestSec": 90, "weightIncrement": 2.5, "…": "…" },
     "templates": [ /* modèles de séance */ ],
     "sessions":  [ /* séances réalisées */ ],
     "customExercises": [ /* exercices personnels */ ]
@@ -100,9 +101,9 @@ npm run fetch:catalog
 }
 ```
 
-Les charges sont **toujours stockées en kilogrammes** ; l'affichage en livres est une
-conversion. À l'import, un fichier contenant directement `templates` / `sessions` est
-également accepté ; les entrées sont fusionnées par identifiant.
+Les charges sont **toujours exprimées en kilogrammes**. À l'import, un fichier contenant
+directement `templates` / `sessions` est également accepté ; les entrées sont fusionnées
+par identifiant, et les réglages inconnus (issus d'une version antérieure) sont ignorés.
 
 ## Limites connues
 

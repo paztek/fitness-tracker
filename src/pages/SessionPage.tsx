@@ -18,13 +18,11 @@ import {
 import { guessTracking, mapById, newPlannedExercise } from '@/lib/templateOps';
 import { buildExerciseStats } from '@/lib/stats';
 import {
-  displayToKg,
   formatClock,
   formatDuration,
   formatNumber,
   formatRelativeDay,
-  kgToDisplay,
-  round,
+  formatWeight,
 } from '@/lib/format';
 import { PHASE_FR } from '@/data/labels';
 import { beep, primeAudio, vibrate } from '@/lib/feedback';
@@ -205,7 +203,7 @@ export function SessionPage() {
                       <span className="tiny muted">
                         {formatRelativeDay(last.date)} :{' '}
                         {last.bestWeight > 0
-                          ? `${round(kgToDisplay(last.bestWeight, settings.units), 1)} ${settings.units} × ${last.bestReps}`
+                          ? `${formatWeight(last.bestWeight)} × ${last.bestReps}`
                           : `${last.totalReps} reps`}
                       </span>
                     )}
@@ -277,25 +275,18 @@ export function SessionPage() {
                           {item.tracking === 'weight' && (
                             <div className="cell">
                               <NumberField
-                                value={
-                                  set.weight === undefined
-                                    ? undefined
-                                    : round(kgToDisplay(set.weight, settings.units), 1)
-                                }
-                                onChange={(value) =>
-                                  updateSet(phase.id, item.id, set.id, {
-                                    weight:
-                                      value === undefined ? undefined : displayToKg(value, settings.units),
-                                  })
+                                value={set.weight}
+                                onChange={(weight) =>
+                                  updateSet(phase.id, item.id, set.id, { weight })
                                 }
                                 step={settings.weightIncrement}
-                                ariaLabel="Charge"
+                                ariaLabel="Charge en kilogrammes"
                                 withButtons={false}
                               />
                               <span className="cell-hint">
                                 {set.targetWeight
-                                  ? `cible ${round(kgToDisplay(set.targetWeight, settings.units), 1)} ${settings.units}`
-                                  : settings.units}
+                                  ? `cible ${formatWeight(set.targetWeight)}`
+                                  : 'kg'}
                               </span>
                             </div>
                           )}
@@ -471,10 +462,8 @@ export function SessionPage() {
             <span className="label muted">séries</span>
           </div>
           <div className="stat">
-            <span className="value">
-              {formatNumber(kgToDisplay(volume, settings.units))}
-            </span>
-            <span className="label muted">{settings.units} soulevés</span>
+            <span className="value">{formatNumber(volume)}</span>
+            <span className="label muted">kg soulevés</span>
           </div>
         </div>
 

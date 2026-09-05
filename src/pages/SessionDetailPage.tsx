@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/components/Layout';
 import { Icon } from '@/components/icons';
 import { Confirm, Sheet, useToast } from '@/components/ui';
-import { useSession, useSettings } from '@/store/selectors';
+import { useSession } from '@/store/selectors';
 import { useStore } from '@/store/store';
 import {
   doneSetsCount,
@@ -17,8 +17,7 @@ import {
   formatDuration,
   formatNumber,
   formatTime,
-  kgToDisplay,
-  round,
+  formatWeight,
 } from '@/lib/format';
 import { PHASE_FR, SET_KIND_FR } from '@/data/labels';
 import { estimate1RM } from '@/lib/stats';
@@ -29,7 +28,6 @@ export function SessionDetailPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const session = useSession(id);
-  const settings = useSettings();
   const deleteSession = useStore((s) => s.deleteSession);
   const saveTemplate = useStore((s) => s.saveTemplate);
   const startSession = useStore((s) => s.startSession);
@@ -103,8 +101,8 @@ export function SessionDetailPage() {
           <span className="label muted">séries</span>
         </div>
         <div className="stat">
-          <span className="value">{formatNumber(kgToDisplay(volume, settings.units))}</span>
-          <span className="label muted">{settings.units} soulevés</span>
+          <span className="value">{formatNumber(volume)}</span>
+          <span className="label muted">kg soulevés</span>
         </div>
       </div>
 
@@ -150,13 +148,12 @@ export function SessionDetailPage() {
                           : item.tracking === 'distance'
                             ? `${formatNumber(set.distanceM ?? 0)} m`
                             : set.weight
-                              ? `${round(kgToDisplay(set.weight, settings.units), 1)} ${settings.units} × ${set.reps ?? 0}`
+                              ? `${formatWeight(set.weight)} × ${set.reps ?? 0}`
                               : `${set.reps ?? 0} reps`}
                       </span>
                       {set.weight && set.reps ? (
                         <span className="tiny muted mono">
-                          ~{round(kgToDisplay(estimate1RM(set.weight, set.reps), settings.units), 1)}{' '}
-                          {settings.units} 1RM
+                          ~{formatWeight(estimate1RM(set.weight, set.reps))} 1RM
                         </span>
                       ) : (
                         <span className="tiny muted">{SET_KIND_FR[set.kind]}</span>

@@ -7,7 +7,12 @@ import { useActiveSession, useSessions, useSettings, useTemplates } from '@/stor
 import { useStore } from '@/store/store';
 import { freeSession, sessionFromTemplate, sessionDurationSec } from '@/lib/sessionOps';
 import { activitySummary, setVolume } from '@/lib/stats';
-import { formatClock, formatDuration, formatNumber, formatRelativeDay, kgToDisplay } from '@/lib/format';
+import {
+  formatClock,
+  formatDuration,
+  formatNumber,
+  formatRelativeDay,
+} from '@/lib/format';
 import { countExercises, estimateDurationSec } from '@/lib/templateOps';
 import { SPORT_FR } from '@/data/labels';
 import { useNow } from '@/lib/useNow';
@@ -107,8 +112,8 @@ export function HomePage() {
           <span className="label muted">séances / 30 j</span>
         </div>
         <div className="stat">
-          <span className="value">{formatNumber(kgToDisplay(weekVolume, settings.units))}</span>
-          <span className="label muted">{settings.units} soulevés / 7 j</span>
+          <span className="value">{formatNumber(weekVolume)}</span>
+          <span className="label muted">kg soulevés / 7 j</span>
         </div>
         <div className="stat">
           <span className="value">{summary.currentWeeks}</span>

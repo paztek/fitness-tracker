@@ -19,7 +19,7 @@ import {
   label,
 } from '@/data/labels';
 import { buildExerciseStats } from '@/lib/stats';
-import { formatDateShort, formatRelativeDay, kgToDisplay, round } from '@/lib/format';
+import { formatDateShort, formatRelativeDay, formatWeight, round } from '@/lib/format';
 import { guessTracking, newPlannedExercise } from '@/lib/templateOps';
 
 export function ExerciseDetailPage() {
@@ -66,8 +66,8 @@ export function ExerciseDetailPage() {
       .filter((e) => e.best1RM > 0)
       .map((e) => ({
         label: formatDateShort(e.date),
-        value: round(kgToDisplay(e.best1RM, settings.units), 1),
-        hint: `${formatDateShort(e.date)} · ${round(kgToDisplay(e.bestWeight, settings.units), 1)} ${settings.units} × ${e.bestReps}`,
+        value: round(e.best1RM, 1),
+        hint: `${formatDateShort(e.date)} · ${formatWeight(e.bestWeight)} × ${e.bestReps}`,
       })) ?? [];
 
   const addToTemplate = (templateId: string, phaseId: string) => {
@@ -157,12 +157,12 @@ export function ExerciseDetailPage() {
           <div className="stat-grid">
             <div className="stat">
               <span className="value">
-                {round(kgToDisplay(stats.prWeight, settings.units), 1) || '—'}
+                {round(stats.prWeight, 1) || '—'}
               </span>
-              <span className="label muted">record {settings.units}</span>
+              <span className="label muted">record kg</span>
             </div>
             <div className="stat">
-              <span className="value">{round(kgToDisplay(stats.pr1RM, settings.units), 1) || '—'}</span>
+              <span className="value">{round(stats.pr1RM, 1) || '—'}</span>
               <span className="label muted">1RM estimée</span>
             </div>
             <div className="stat">
@@ -173,7 +173,7 @@ export function ExerciseDetailPage() {
           {chartPoints.length > 1 && (
             <LineChart
               points={chartPoints}
-              format={(v) => `${v} ${settings.units} (1RM est.)`}
+              format={(v) => `${v} kg (1RM est.)`}
             />
           )}
           <div className="list" style={{ gap: 4 }}>
@@ -192,7 +192,7 @@ export function ExerciseDetailPage() {
                   </span>
                   <span className="mono">
                     {historyEntry.bestWeight > 0
-                      ? `${round(kgToDisplay(historyEntry.bestWeight, settings.units), 1)} ${settings.units} × ${historyEntry.bestReps}`
+                      ? `${formatWeight(historyEntry.bestWeight)} × ${historyEntry.bestReps}`
                       : `${historyEntry.totalReps} reps`}
                   </span>
                 </button>
