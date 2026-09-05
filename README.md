@@ -52,6 +52,8 @@ données restent dans le navigateur et s'exportent en JSON.
 ```bash
 npm install
 npm run dev        # http://localhost:5173
+npm test           # suite Vitest (logique pure)
+npm run typecheck  # tsc -b
 npm run build      # génère dist/
 npm run preview    # sert dist/ localement
 ```
@@ -62,6 +64,28 @@ utilise un routeur à `#`, donc aucune règle de réécriture n'est nécessaire 
 
 Sur mobile : ouvrir l'URL puis « Ajouter à l'écran d'accueil » — le manifeste et le
 service worker rendent l'application installable et utilisable hors ligne.
+
+## Intégration continue et déploiement
+
+`.github/workflows/ci.yml` vérifie les types, lance les tests puis construit
+l'application à chaque push et chaque pull request. Sur `main`, le contenu de `dist/`
+est ensuite publié sur **GitHub Pages**.
+
+Prérequis, une seule fois : dans *Settings → Pages* du dépôt, choisir **Source :
+GitHub Actions**. Le site est alors servi depuis
+`https://<compte>.github.io/fitness-tracker/` — le build utilisant des chemins relatifs
+et un routeur à `#`, aucune configuration de chemin de base n'est nécessaire.
+
+## Tests
+
+Les tests couvrent la logique pure, celle qui casse en silence : classement de la
+recherche et index bilingue, statistiques (1RM estimée, volume, records, semaines),
+conversion modèle → séance, et validation des fichiers importés.
+
+```bash
+npm test           # une passe
+npm run test:watch # en continu
+```
 
 ## Structure
 
@@ -74,6 +98,7 @@ src/
   store/       état global (Zustand + persistance localStorage) et sélecteurs
   components/  briques d'interface (feuilles modales, champs, graphiques SVG, catalogue)
   pages/       accueil, modèles, éditeur, séance, historique, catalogue, progression, réglages
+  **/*.test.ts tests unitaires, à côté du code qu'ils couvrent
 public/
   catalog/exercises.json   catalogue généré (voir ci-dessous)
 ```

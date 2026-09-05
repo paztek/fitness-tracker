@@ -33,11 +33,18 @@ export function formatClock(totalSeconds: number): string {
 export function formatDuration(totalSeconds: number): string {
   const s = Math.max(0, Math.round(totalSeconds));
   if (s < 60) return `${s} s`;
+
   const h = Math.floor(s / 3600);
-  const m = Math.round((s % 3600) / 60);
-  if (h > 0) return m > 0 ? `${h} h ${m} min` : `${h} h`;
+  if (h > 0) {
+    const m = Math.round((s % 3600) / 60);
+    return m > 0 ? `${h} h ${m} min` : `${h} h`;
+  }
+
   const sec = s % 60;
-  return sec > 0 && s < 600 ? `${m} min ${sec} s` : `${m} min`;
+  // Sous dix minutes, on garde les secondes : les minutes sont alors
+  // tronquées, sinon 95 s s'afficherait « 2 min 35 s ».
+  if (sec > 0 && s < 600) return `${Math.floor(s / 60)} min ${sec} s`;
+  return `${Math.round(s / 60)} min`;
 }
 
 const dateFmt = new Intl.DateTimeFormat('fr-FR', {

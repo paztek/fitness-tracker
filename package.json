@@ -7,8 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b --noEmit false --emitDeclarationOnly false",
-    "fetch:catalog": "node scripts/build-catalog.mjs"
+    "typecheck": "tsc -b",
+    "fetch:catalog": "node scripts/build-catalog.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -22,6 +24,7 @@
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.2",
     "typescript": "^5.9.2",
-    "vite": "^7.1.4"
+    "vite": "^7.1.4",
+    "vitest": "^5.0.0"
   }
 }
